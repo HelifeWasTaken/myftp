@@ -52,6 +52,8 @@ void ftp_disconnect_client_active_state(struct ftp_server *server,
     }
     client->is_active = false;
     client->active_state.sockfd = -1;
+    memset(&client->active_state.sockin, 0,
+        sizeof(client->active_state.sockin));
     ftp_recalculate_fd_max_select(server);
 }
 
@@ -73,8 +75,9 @@ void ftp_disconnect_client(struct ftp_server *server, unsigned int clientidx)
         FD_CLR(client->sockfd, &server->selector.base_set);
     }
     ftp_disconnect_client_active_state(server, clientidx);
-    fprintf(stderr, "User disconnected: %s:%hu",
-        inet_ntoa(client->sockin.sin_addr), ntohs(client->sockin.sin_port));
+    fprintf(stderr, "User disconnected: %s:%hu%s",
+        inet_ntoa(client->sockin.sin_addr), ntohs(client->sockin.sin_port),
+        CRLF);
     memset(client, 0, sizeof(struct ftp_client));
     ftp_recalculate_fd_max_select(server);
 }

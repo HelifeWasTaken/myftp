@@ -232,12 +232,32 @@ void ftp_manage_client_cmd_noop(struct ftp_server *server,
 //
 // Activates the active_state of the current client and checks wheter
 // the port is valid (this does not connect to the socket of the other program)
+// Active state is a state where in data transfer the stream
+// is directly directed on the specified port of the client
 //
 // If the command succeed we reply a 200
 // If the command was wrongly typed we reply a 501
 // If the port is invalid we reply a 500
 //
 void ftp_manage_client_cmd_port(struct ftp_server *server,
+    struct ftp_client *client, int argc, char **argv);
+
+//
+// Returns in passive state
+// Passive state is a state where in data transfer the stream
+// is directly directed on antoher mini server in the ftp in local
+//
+// If the command succeed we reply a 227
+// (In such format: (h1,h2,h3,h4,p1,p2))
+// If the command was wrongly typed we reply a 501
+//
+// The ip can be retrieved by bitmasking each of the parts of the
+// sockin.sin_addr.s_addr
+//
+// The port can be retrieved by dividing by 256 for the first part
+// and with a modulus on 256 for the second part
+//
+void ftp_manage_client_cmd_pasv(struct ftp_server *server,
     struct ftp_client *client, int argc, char **argv);
 
 //

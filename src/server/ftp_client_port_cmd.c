@@ -22,6 +22,8 @@
 //
 // Activates the active_state of the current client and checks wheter
 // the port is valid (this does not connect to the socket of the other program)
+// Active state is a state where in data transfer the stream
+// is directly directed on the specified port of the client
 //
 // If the command succeed we reply a 200
 // If the command was wrongly typed we reply a 501

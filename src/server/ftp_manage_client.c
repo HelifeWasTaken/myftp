@@ -29,7 +29,8 @@ static const struct ftp_client_commands FTP_CLIENT_COMMANDS[] = {
     {"CDUP", ftp_manage_client_cmd_cdup},
     {"DELE", ftp_manage_client_cmd_dele},
     {"PWD",  ftp_manage_client_cmd_pwd},
-    {"NOOP", ftp_manage_client_cmd_noop}
+    {"NOOP", ftp_manage_client_cmd_noop},
+    {"PORT", ftp_manage_client_cmd_port}
 };
 
 static const size_t FTP_CLIENT_COMMANDS_SIZE =

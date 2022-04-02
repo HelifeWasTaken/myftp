@@ -49,7 +49,7 @@ struct ftp_server *init_ftp_socket(char const *path, char const *port)
         "ftp: Invalid numerical value for port: \"%s\"", port);
     tmpport = atoi(port);
     ftp_assert(!(tmpport < 0 || tmpport > USHRT_MAX), false,
-            "ftp: port: %d is not in range 0..%d", s->port, SHRT_MAX);
+            "ftp: port: %d is not in range 0..%d", tmpport, SHRT_MAX);
     s->port = tmpport;
     ftp_assert((s->sockfd = socket(AF_INET, SOCK_STREAM, 0)) != -1, true,
         "ftp: socket(AF_INET, SOCK_STREAM, 0) = -1");

@@ -36,9 +36,9 @@ void ftp_manage_client_cmd_cwd(struct ftp_server *server UNUSED,
     char tmp[FTP_STANDARD_PATH_LIMIT] = {0};
     enum ftp_path_status status = FTP_PATH_VALID;
 
-    memcpy(tmp, client->path, FTP_STANDARD_PATH_LIMIT);
     if (argc != 2)
         return rfc959(client, 501);
+    memcpy(tmp, client->path, FTP_STANDARD_PATH_LIMIT);
     array = str_split(argv[1], "/");
     if (argv[1][0] == '/')
         array = vector_array_append_front(array, "/", true);
@@ -65,9 +65,9 @@ void ftp_manage_client_cmd_cdup(struct ftp_server *server UNUSED,
     char tmp[FTP_STANDARD_PATH_LIMIT] = {0};
     enum ftp_path_status status = FTP_PATH_VALID;
 
-    memcpy(tmp, client->path, FTP_STANDARD_PATH_LIMIT);
     if (argc != 1)
         return rfc959(client, 501);
+    memcpy(tmp, client->path, FTP_STANDARD_PATH_LIMIT);
     status = ftp_filesystem_path_cwd_internal(server->home, tmp, "..");
     if (status == FTP_PATH_VALID)
         memcpy(client->path, tmp, FTP_STANDARD_PATH_LIMIT);

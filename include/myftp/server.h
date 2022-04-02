@@ -230,6 +230,17 @@ void ftp_manage_client_cmd_noop(struct ftp_server *server,
     struct ftp_client *client, int argc, char **argv);
 
 //
+// Activates the active_state of the current client and checks wheter
+// the port is valid (this does not connect to the socket of the other program)
+//
+// If the command succeed we reply a 200
+// If the command was wrongly typed we reply a 501
+// If the port is invalid we reply a 500
+//
+void ftp_manage_client_cmd_port(struct ftp_server *server,
+    struct ftp_client *client, int argc, char **argv);
+
+//
 // Handle the commands of the client
 // Calls mrecv which receive the plain string of the current client
 // If command.bytes is null the client must have disconnected so

@@ -29,7 +29,7 @@ enum ftp_path_status ftp_filesystem_check_current_path(char const *root,
     if (current_path[size_root] != '/' && current_path[size_root] != '\0')
         return FTP_PATH_CONTAINS_ROOT_BUT_IS_LONGER;
     for (int i = size_root; current_path[i]; i++)
-        if (current_path[i] == '/' && current_path[i] == '/')
+        if (current_path[i] == '/' && current_path[i + 1] == '/')
             return FTP_PATH_IS_INVALID;
     if (!check_is_dir)
         return FTP_PATH_VALID;
@@ -121,4 +121,41 @@ enum ftp_path_status ftp_manage_client_cmd_cwd_no_reply(
     if (status == FTP_PATH_VALID)
         memcpy(client->path, tmp, FTP_STANDARD_PATH_LIMIT);
     return status;
+}
+
+//
+// Resolve the path to a file / folder
+// E.G: folder1/folder2/folder3
+// Resolve a silent CWD to folder1/folder2
+// This does not check if folder3 is existant but only resolve the path
+// towards it!
+//
+// This function is destructive for the client path so it recommended
+// to do it either in a fork or a copied path
+//
+// Good luck to debug that (it works don't touch it)
+//
+enum ftp_path_status ftp_resolve_file_path(
+    struct ftp_client *client, char const *home, char const *destination)
+{
+    char tmp[FTP_STANDARD_PATH_LIMIT + 1];
+    char *ptr;
+    enum ftp_path_status status;
+
+    strncpy(tmp, destination, FTP_STANDARD_PATH_LIMIT);
+    ptr = strrchr(tmp, '/');
+    if (ptr == NULL) {
+        if (strlen(tmp) + 3 > FTP_STANDARD_PATH_LIMIT) return FTP_PATH_TOO_LONG;
+        memcpy(memmove(tmp + 2, tmp,
+                FTP_STANDARD_PATH_LIMIT - 2) - 2, "./", 2);
+        ptr = strrchr(tmp, '/');
+    }
+    if (strcmp(client->path, tmp) == 0) return FTP_PATH_VALID;
+    if (tmp != ptr) *ptr = 0;
+    status = ftp_manage_client_cmd_cwd_no_reply(client, home, tmp);
+    if (status != FTP_PATH_VALID ||
+        strlen(client->path) + strlen(ptr + 1) + 1 >= FTP_STANDARD_PATH_LIMIT)
+        return FTP_PATH_TOO_LONG;
+    if (tmp != ptr) strcat(strcat(client->path, "/"), ptr + 1);
+    return FTP_PATH_VALID;
 }

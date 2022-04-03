@@ -26,13 +26,13 @@
 static void ftp_accept_client_internal_set(struct ftp_server *server,
         struct ftp_client *client)
 {
-    memcpy(&server->selector.clients_data[client->sockfd],
-        client, sizeof(struct ftp_client));
     if (server->selector.max_fd < client->sockfd)
         server->selector.max_fd = client->sockfd;
     FD_SET(client->sockfd, &server->selector.base_set);
     client->status = FTP_WAITING_FOR_USERNAME;
     strncpy(client->path, server->home, FTP_STANDARD_PATH_LIMIT);
+    memcpy(&server->selector.clients_data[client->sockfd],
+        client, sizeof(struct ftp_client));
     rfc959(client, 220);
     free(client);
 }

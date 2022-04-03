@@ -261,6 +261,39 @@ void ftp_manage_client_cmd_pasv(struct ftp_server *server,
     struct ftp_client *client, int argc, char **argv);
 
 //
+// Forks the program and initialize the data stream connection if the arguments
+// are compliant
+//
+// The program will then try before to resolve the given path
+// Will open the file and finally intialize the connection between the
+// two servers
+//
+void ftp_manage_client_cmd_retr(struct ftp_server *server,
+    struct ftp_client *client, int argc, char **argv);
+
+//
+// Forks the program and initialize the data stream connection if the arguments
+// are compliant
+//
+// The program will then try before to resolve the given path
+// Will open the file and finally intialize the connection between the
+// two servers
+//
+void ftp_manage_client_cmd_stor(struct ftp_server *server,
+    struct ftp_client *client, int argc, char **argv);
+
+//
+// Forks the program and initialize the data stream connection if the arguments
+// are compliant
+//
+// The program will then try before to resolve the given path
+// Will open the file and finally intialize the connection between the
+// two servers
+//
+void ftp_manage_client_cmd_list(struct ftp_server *server,
+    struct ftp_client *client, int argc, char **argv);
+
+//
 // Handle the commands of the client
 // Calls mrecv which receive the plain string of the current client
 // If command.bytes is null the client must have disconnected so

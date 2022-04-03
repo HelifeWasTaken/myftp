@@ -32,7 +32,6 @@
 void ftp_manage_client_cmd_port(struct ftp_server *server UNUSED,
     struct ftp_client *client, int argc, char **argv)
 {
-    const char *current_ip = inet_ntoa(client->sockin.sin_addr);
     int tmpport = -1;
 
     if (argc != 2)

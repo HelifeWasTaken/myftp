@@ -61,3 +61,16 @@ enum ftp_path_status ftp_filesystem_path_cwd_internal(char const *root,
 //
 enum ftp_path_status ftp_manage_client_cmd_cwd_no_reply(
     struct ftp_client *client, char const *home, char const *destination);
+
+//
+// Resolve the path to a file / folder
+// E.G: folder1/folder2/folder3
+// Resolve a silent CWD to folder1/folder2
+// This does not check if folder3 is existant but only resolve the path
+// towards it!
+//
+// This function is destructive for the client path so it recommended
+// to do it either in a fork or a copied path
+//
+enum ftp_path_status ftp_resolve_file_path(
+    struct ftp_client *client, char const *home, char const *destination);

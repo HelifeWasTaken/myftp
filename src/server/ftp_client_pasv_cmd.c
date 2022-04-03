@@ -35,7 +35,7 @@
 // and with a modulus on 256 for the second part
 //
 void ftp_manage_client_cmd_pasv(struct ftp_server *server UNUSED,
-    struct ftp_client *client, int argc, char **argv)
+    struct ftp_client *client, int argc, char **argv UNUSED)
 {
     const int ip = client->sockin.sin_addr.s_addr;
     const int port = client->sockin.sin_port;

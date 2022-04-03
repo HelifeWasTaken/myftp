@@ -32,18 +32,12 @@
 static void ftp_manage_client_cmd_dele_internal(char *rootfolder,
         char *file_to_delete, struct ftp_client *client)
 {
-    char *ptr = strrchr(file_to_delete, '/');
-    enum ftp_path_status status;
+    enum ftp_path_status status = ftp_resolve_file_path(client, rootfolder,
+            file_to_delete);
 
-    if (ptr == NULL)
+    if (status != FTP_PATH_VALID)
         return rfc959(client, 550);
-    if (client->path != ptr)
-        *ptr = 0;
-    status = ftp_manage_client_cmd_cwd_no_reply(client, rootfolder,
-        file_to_delete);
-    if (status != FTP_PATH_VALID || ptr[1] == '\0')
-        return rfc959(client, 550);
-    if (remove(ptr + 1) == 0)
+    if (remove(client->path) == 0)
         return rfc959(client, 250);
     return errno == EBUSY ? rfc959(client, 450) : rfc959(client, 550);
 }

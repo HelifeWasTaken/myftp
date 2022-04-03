@@ -68,7 +68,13 @@ SRC_SERVER 	=		./src/server/mrecv.c 							\
 					./src/server/ftp_path_client_cwd_cdup_cmd2.c	\
 					./src/server/ftp_client_del_cmd.c 				\
 					./src/server/ftp_client_pwd_cmd.c 				\
-					./src/server/ftp_client_noop_cmd.c
+					./src/server/ftp_client_noop_cmd.c 				\
+					./src/server/ftp_client_pasv_cmd.c 				\
+					./src/server/ftp_client_port_cmd.c 				\
+					./src/server/ftp_client_retr_cmd.c 				\
+					./src/server/ftp_client_stor_cmd.c 				\
+					./src/server/ftp_client_list_cmd.c
+
 
 SRC			=		$(SRC_INIT)									\
 					$(SRC_UTILS)								\

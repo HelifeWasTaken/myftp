@@ -85,8 +85,7 @@ void ftp_manage_client(struct ftp_server *server, unsigned int clientidx)
         inet_ntoa(client->sockin.sin_addr), ntohs(client->sockin.sin_port));
     for (int i = 0; argv[i]; i++)
         fprintf(stderr, "%s%s", argv[i], argv[i + 1] ? ", " : "]"CRLF);
-    cmd = ftp_get_matched_command(argv[0]);
-    if (cmd == NULL) {
+    if ((cmd = ftp_get_matched_command(argv[0])) == NULL) {
         vector_array_free(argv);
         return rfc959(client, 500);
     }

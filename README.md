@@ -1,4 +1,5 @@
 # myftp
+```
 An basic RFC959 Compliant fully documented in C
 
 EPITECH MyFTP Protocol (RFC959 Extract)
@@ -116,3 +117,4 @@ Example :
                NOOP ->
                   <- 200
                   <- xxx
+```

@@ -39,8 +39,9 @@ static const struct ftp_rfc959_table RFC959_TABLE[] = {
     {221,   "Service closing control connection."CRLF
             "Logged out if appropriate."},
     {225,   "Data connection open; no transfer in progress."},
-    {226,   "Closing data connection."CRLF"Requested file action successful"},
-    {227,   "Entering Passive  Mode (%d,%d,%d,%d,%d,%d)."},
+    {226,   "Closing data connection."CRLF
+            "Requested file action successful"},
+    {227,   "Entering Passive Mode (%d,%d,%d,%d,%d,%d)."},
     {230,   "User logged in, proceed."},
     {250,   "Requested file action okay, completed."},
     {257,   "%s"},

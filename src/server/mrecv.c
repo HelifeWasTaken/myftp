@@ -30,6 +30,17 @@ static struct ftp_buffer disconnect_client_mrecv_internal(
     return *buf;
 }
 
+static struct ftp_buffer mrecv_end(struct ftp_server *server,
+        unsigned int clientidx, int receiving_raw_text, struct ftp_buffer *buf)
+{
+    if (receiving_raw_text) {
+        buf->bytes = xrealloc(buf->bytes, sizeof(char) * (buf->size + 1));
+        buf->bytes[buf->size] = 0;
+    }
+    return buf->size == 0 || buf->bytes == NULL ?
+        disconnect_client_mrecv_internal(server, clientidx, buf) : *buf;
+}
+
 //
 // Recieve a command from the client
 // If the received size is of size 0
@@ -69,6 +80,5 @@ struct ftp_buffer mrecv(struct ftp_server *server,
             memcmp(buf.bytes + buf.size - 2, "\r\n", 2) == 0)
             break;
     }
-    return buf.bytes == 0 ?
-        disconnect_client_mrecv_internal(server, clientidx, &buf) : buf;
+    return mrecv_end(server, clientidx, receiving_raw_text, &buf);
 }

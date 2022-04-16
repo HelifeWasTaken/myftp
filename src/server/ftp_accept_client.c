@@ -51,6 +51,7 @@ void ftp_accept_client(struct ftp_server *server)
     socklen_t len = sizeof(struct sockaddr_in);
     struct ftp_client *client = xcalloc(sizeof(struct ftp_client), 1);
 
+    client->mod.port = -1;
     client->sockfd = accept(server->sockfd, (void *)&client->sockin, &len);
     if (client->sockfd == -1) {
         free(client);

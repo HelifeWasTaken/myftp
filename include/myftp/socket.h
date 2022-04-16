@@ -23,6 +23,12 @@ enum ftp_client_status {
     FTP_CONNECTED
 };
 
+enum ftp_client_mode {
+    FTP_CLIENT_NO_MODE,
+    FTP_CLIENT_PASSIVE,
+    FTP_CLIENT_ACTIVE
+};
+
 struct ftp_client {
     int sockfd;
     struct sockaddr_in sockin;
@@ -32,11 +38,12 @@ struct ftp_client {
     char *input;
     size_t buffer_size;
     enum ftp_client_status status;
-    bool is_active;
+    enum ftp_client_mode mode;
     struct {
         struct sockaddr_in sockin;
         int sockfd;
-    } active_state;
+        int port;
+    } mod;
 };
 
 struct ftp_select_handler {
@@ -48,7 +55,6 @@ struct ftp_select_handler {
 
 struct ftp_server {
     int sockfd;
-    int clientfd;
     uint16_t port;
     struct protoent *proto;
     struct sockaddr_in in;

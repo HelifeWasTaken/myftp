@@ -33,28 +33,24 @@ static void ftp_recalculate_fd_max_select(struct ftp_server *server)
 }
 
 //
-// Desactivates the client active state
+// Desactivates the client passive or active state
 // Is basically the same thing as ftp_disconnect_client
 // for the shutdown close clear and deconnection
 //
-void ftp_disconnect_client_active_state(struct ftp_server *server,
+void ftp_disconnect_client_mode_state(struct ftp_server *server,
         unsigned int clientidx)
 {
     struct ftp_client *client = &server->selector.clients_data[clientidx];
 
-    if (client->is_active == false)
-        return;
-    if (client->active_state.sockfd != 0 &&
-        client->active_state.sockfd != -1) {
-        shutdown(client->sockfd, SHUT_RDWR);
-        close(client->sockfd);
-        FD_CLR(client->sockfd, &server->selector.base_set);
+    if (client->mod.sockfd != 0 &&
+        client->mod.sockfd != -1) {
+        shutdown(client->mod.sockfd, SHUT_RDWR);
+        close(client->mod.sockfd);
     }
-    client->is_active = false;
-    client->active_state.sockfd = -1;
-    memset(&client->active_state.sockin, 0,
-        sizeof(client->active_state.sockin));
-    ftp_recalculate_fd_max_select(server);
+    client->mode = FTP_CLIENT_NO_MODE;
+    client->mod.sockfd = -1;
+    memset(&client->mod.sockin, 0,
+        sizeof(client->mod.sockin));
 }
 
 //
@@ -74,10 +70,25 @@ void ftp_disconnect_client(struct ftp_server *server, unsigned int clientidx)
         close(client->sockfd);
         FD_CLR(client->sockfd, &server->selector.base_set);
     }
-    ftp_disconnect_client_active_state(server, clientidx);
+    ftp_disconnect_client_mode_state(server, clientidx);
     fprintf(stderr, "User disconnected: %s:%hu%s",
         inet_ntoa(client->sockin.sin_addr), ntohs(client->sockin.sin_port),
         CRLF);
     memset(client, 0, sizeof(struct ftp_client));
+    client->sockfd = -1;
+    client->mod.port = -1;
     ftp_recalculate_fd_max_select(server);
+}
+
+//
+// Disconnect the current client and closes his data stream connection
+// Should always return 220 except if the client give more than 1 arguments
+//
+void ftp_manage_client_cmd_quit(struct ftp_server *server,
+    struct ftp_client *client, int argc, char **argv UNUSED)
+{
+    if (argc > 2)
+        return rfc959(client, 501);
+    rfc959(client, 200);
+    ftp_disconnect_client(server, client - server->selector.clients_data);
 }

@@ -13,7 +13,7 @@ WFLAGS 		=		-W -Wall -Wextra -Werror
 
 STDFLAGS 	=		-std=c99
 
-DFLAGS 		=		-DGNU_SOURCE -D_POSIX_C_SOURCE=200809L
+DFLAGS 		=		-D_GNU_SOURCE -D_POSIX_C_SOURCE=200809L
 
 IFLAGS 		=		-I./include
 

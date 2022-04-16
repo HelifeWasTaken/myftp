@@ -33,16 +33,13 @@
 static void ftp_manage_client_list_internal_send(
     struct ftp_server *server, struct ftp_client *client, DIR *data)
 {
-    socklen_t size = sizeof(client->active_state.sockin);
+    socklen_t size = sizeof(client->mod.sockin);
     struct dirent *dir;
-    int fd;
+    int fd = client->mod.sockfd;
 
-    if (client->is_active) {
-        fd = accept(server->sockfd,
-            (struct sockaddr *)&client->active_state.sockin, &size);
-    } else {
-        rfc959(client, 125);
-        fd = client->sockfd;
+    if (client->mode == FTP_CLIENT_PASSIVE) {
+        fd = accept(client->mod.sockfd,
+            (struct sockaddr *)&client->mod.sockin, &size);
     }
     if (fd == -1)
         return rfc959(client, 425);
@@ -51,7 +48,7 @@ static void ftp_manage_client_list_internal_send(
         socket_puts(fd, CRLF);
     }
     rfc959(client, 250);
-    ftp_disconnect_client_active_state(server,
+    ftp_disconnect_client_mode_state(server,
             client - server->selector.clients_data);
 }
 
@@ -66,7 +63,6 @@ static void ftp_manage_client_list_internal(struct ftp_server *server,
     struct stat st;
     DIR *dir = NULL;
 
-    setvbuf(stdout, NULL, _IONBF, BUFSIZ);
     status = ftp_resolve_file_path(client, rootfolder, directory_to_check);
     if (status != FTP_PATH_VALID)
         return rfc959(client, 550);
@@ -94,6 +90,8 @@ void ftp_manage_client_cmd_list(struct ftp_server *server,
 
     if (argc > 2)
         rfc959(client, 501);
+    if (client->mode == FTP_CLIENT_NO_MODE)
+        return rfc959(client, 425);
     pid = fork();
     if (pid < 0) {
         perror("Fork");

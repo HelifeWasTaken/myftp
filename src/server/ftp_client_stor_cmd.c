@@ -31,24 +31,21 @@
 static void ftp_manage_client_stor_user_internal_recv(
     struct ftp_server *server, struct ftp_client *client, int data)
 {
-    socklen_t size = sizeof(client->active_state.sockin);
-    int fd = -1;
+    socklen_t size = sizeof(client->mod.sockin);
+    int fd = client->mod.sockfd;
     ssize_t towrite = 0;
     char buf[BUFSIZ] = {0};
 
-    if (client->is_active) {
-        fd = accept(server->sockfd,
-            (struct sockaddr *)&client->active_state.sockin, &size);
-    } else {
-        rfc959(client, 125);
-        fd = client->sockfd;
+    if (client->mode == FTP_CLIENT_PASSIVE) {
+        fd = accept(client->mod.sockfd,
+            (struct sockaddr *)&client->mod.sockin, &size);
     }
     if (fd == -1)
         return rfc959(client, 425);
     while ((towrite = read(fd, buf, BUFSIZ)) > 0)
         socket_write(data, buf, towrite);
     towrite != -1 ? rfc959(client, 250) : rfc959(client, 426);
-    ftp_disconnect_client_active_state(server,
+    ftp_disconnect_client_mode_state(server,
             client - server->selector.clients_data);
 }
 
@@ -94,6 +91,8 @@ void ftp_manage_client_cmd_stor(struct ftp_server *server,
 
     if (argc != 2)
         rfc959(client, 501);
+    if (client->mode == FTP_CLIENT_NO_MODE)
+        return rfc959(client, 425);
     pid = fork();
     if (pid < 0) {
         perror("Fork");

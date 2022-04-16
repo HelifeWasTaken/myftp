@@ -72,14 +72,13 @@ void ftp_accept_client(struct ftp_server *server);
 void ftp_disconnect_client(struct ftp_server *server, unsigned int clientidx);
 
 //
-// Desactivates the client active state
+// Desactivates the client mode state
 // Is basically the same thing as ftp_disconnect_client
 // for the shutdown close clear and deconnection but only desactivates
 // The active port state
 //
-void ftp_disconnect_client_active_state(struct ftp_server *server,
-        unsigned int client_index);
-
+void ftp_disconnect_client_mode_state(struct ftp_server *server,
+        unsigned int clientidx);
 //
 // Call selects to get information about all currently set fds
 // Go through all the possible fds in the FD_SET
@@ -291,6 +290,13 @@ void ftp_manage_client_cmd_stor(struct ftp_server *server,
 // two servers
 //
 void ftp_manage_client_cmd_list(struct ftp_server *server,
+    struct ftp_client *client, int argc, char **argv);
+
+//
+// Disconnect the current client and closes his data stream connection
+// Should always return 220 except if the client give more than 1 arguments
+//
+void ftp_manage_client_cmd_quit(struct ftp_server *server,
     struct ftp_client *client, int argc, char **argv);
 
 //

@@ -30,6 +30,10 @@ static struct ftp_buffer disconnect_client_mrecv_internal(
     return *buf;
 }
 
+//
+// Is used to either disconnect the client nothing was received from him
+// and to add a \0 char to the string if the receiving_raw_text option is set
+//
 static struct ftp_buffer mrecv_end(struct ftp_server *server,
         unsigned int clientidx, int receiving_raw_text, struct ftp_buffer *buf)
 {

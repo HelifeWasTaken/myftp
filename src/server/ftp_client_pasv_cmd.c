@@ -13,6 +13,10 @@
 #include <arpa/inet.h>
 #include <limits.h>
 #include <stdlib.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <unistd.h>
+#include <netdb.h>
 
 #include "myftp/socket.h"
 #include "myftp/server.h"
@@ -34,21 +38,43 @@
 // The port can be retrieved by dividing by 256 for the first part
 // and with a modulus on 256 for the second part
 //
-void ftp_manage_client_cmd_pasv(struct ftp_server *server UNUSED,
+int ftp_manage_client_cmd_pasv_internal(struct ftp_server *server UNUSED,
+    struct ftp_client *client)
+{
+    struct protoent *proto = getprotobyname("TCP");
+    socklen_t s = sizeof(client->mod.sockin);
+
+    client->mod.sockin = (struct sockaddr_in){
+        .sin_port = htons(0), .sin_family = AF_INET,
+        .sin_addr = { .s_addr = INADDR_ANY }};
+    if (proto == NULL)
+        return 1;
+    if (client->mod.sockfd == -1) {
+        close(client->mod.sockfd);
+        client->mod.sockfd = -1;
+    }
+    client->mod.sockfd = socket(AF_INET, SOCK_STREAM, proto->p_proto);
+    if (client->mod.sockfd == -1 ||
+        bind(client->mod.sockfd, (const void *)&client->mod.sockin,
+        sizeof(client->mod.sockin)) == -1 ||
+        listen(client->mod.sockfd, 1) == -1 ||
+        getsockname(client->mod.sockfd, (void *)&client->mod.sockin, &s) == -1)
+        return 1;
+    client->mod.port = ntohs(client->mod.sockin.sin_port);
+    return 0;
+}
+
+void ftp_manage_client_cmd_pasv(struct ftp_server *server,
     struct ftp_client *client, int argc, char **argv UNUSED)
 {
-    const int ip = client->sockin.sin_addr.s_addr;
-    const int port = client->sockin.sin_port;
-    const int full_ip[6] = {
-        ip & 0xFF, (ip & 0xFF00) >> 8,
-        (ip & 0xFF0000) >> 16, (ip & 0xff000000) >> 24,
-        port / 256, port % 256
-    };
-
-    if (argc != 1)
-        return rfc959(client, 501);
-    ftp_disconnect_client_active_state(server,
-        client - server->selector.clients_data);
-    return rfc959(client, 227, full_ip[0], full_ip[1], full_ip[2], full_ip[3],
-            full_ip[4], full_ip[5]);
+    if (argc > 1 || ftp_manage_client_cmd_pasv_internal(server, client) == 1) {
+        rfc959(client, 500);
+        return;
+    }
+    client->mode = FTP_CLIENT_PASSIVE;
+    rfc959(client, 227, client->sockin.sin_addr.s_addr & 0xFF,
+        (client->sockin.sin_addr.s_addr & 0xFF00) >> 8,
+        (client->sockin.sin_addr.s_addr & 0xFF0000) >> 16,
+        (client->sockin.sin_addr.s_addr & 0xff000000) >> 24,
+        client->mod.port / 256, client->mod.port % 256);
 }

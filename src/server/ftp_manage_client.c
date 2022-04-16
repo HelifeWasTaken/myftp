@@ -24,18 +24,19 @@ struct ftp_client_commands {
 };
 
 static const struct ftp_client_commands FTP_CLIENT_COMMANDS[] = {
+    {"NOOP", ftp_manage_client_cmd_noop, FTP_WAITING_FOR_USERNAME},
+    {"QUIT", ftp_manage_client_cmd_quit, FTP_WAITING_FOR_USERNAME},
     {"USER", ftp_manage_client_cmd_user, FTP_WAITING_FOR_USERNAME},
     {"PASS", ftp_manage_client_cmd_pass, FTP_WAITING_FOR_PASSWORD},
     {"CWD",  ftp_manage_client_cmd_cwd,  FTP_CONNECTED},
     {"CDUP", ftp_manage_client_cmd_cdup, FTP_CONNECTED},
     {"DELE", ftp_manage_client_cmd_dele, FTP_CONNECTED},
     {"PWD",  ftp_manage_client_cmd_pwd,  FTP_CONNECTED},
-    {"NOOP", ftp_manage_client_cmd_noop, FTP_WAITING_FOR_USERNAME},
     {"PORT", ftp_manage_client_cmd_port, FTP_CONNECTED},
     {"PASV", ftp_manage_client_cmd_pasv, FTP_CONNECTED},
     {"RETR", ftp_manage_client_cmd_retr, FTP_CONNECTED},
     {"STOR", ftp_manage_client_cmd_stor, FTP_CONNECTED},
-    {"LIST", ftp_manage_client_cmd_list, FTP_CONNECTED}
+    {"LIST", ftp_manage_client_cmd_list, FTP_CONNECTED},
 };
 
 static const size_t FTP_CLIENT_COMMANDS_SIZE =

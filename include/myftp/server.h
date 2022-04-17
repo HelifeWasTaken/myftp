@@ -300,6 +300,14 @@ void ftp_manage_client_cmd_quit(struct ftp_server *server,
     struct ftp_client *client, int argc, char **argv);
 
 //
+// If argc > 2 command is invalid
+// If argc == 2 Display the help for a specific command (argv[1])
+// If specified command does not exists rfc959(501)
+// If argc == 1 Display the help for all the commands
+//
+void ftp_manage_client_cmd_help(struct ftp_server *server,
+        struct ftp_client *client, int argc, char **argv);
+//
 // Handle the commands of the client
 // Calls mrecv which receive the plain string of the current client
 // If command.bytes is null the client must have disconnected so

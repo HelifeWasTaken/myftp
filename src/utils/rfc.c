@@ -31,8 +31,9 @@ static const struct ftp_rfc959_table RFC959_TABLE[] = {
     {212,   "Directory status."},
     {213,   "File status."},
 
+    {214,   "214 OK."},
+
     // TODO Implement thoses
-    {214,   "214 message not implemented"},
     {215,   "215 message not implemented"},
 
     {220,   "Service ready for new user."},

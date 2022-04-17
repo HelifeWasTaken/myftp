@@ -73,7 +73,8 @@ SRC_SERVER 	=		./src/server/mrecv.c 							\
 					./src/server/ftp_client_port_cmd.c 				\
 					./src/server/ftp_client_retr_cmd.c 				\
 					./src/server/ftp_client_stor_cmd.c 				\
-					./src/server/ftp_client_list_cmd.c
+					./src/server/ftp_client_list_cmd.c 				\
+					./src/server/ftp_client_help_cmd.c
 
 
 SRC			=		$(SRC_INIT)									\

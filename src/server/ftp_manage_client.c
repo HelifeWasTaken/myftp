@@ -29,6 +29,7 @@ static const struct ftp_client_commands FTP_CLIENT_COMMANDS[] = {
     {"NOOP", ftp_manage_client_cmd_noop, FTP_WAITING_FOR_USERNAME, false},
     {"QUIT", ftp_manage_client_cmd_quit, FTP_WAITING_FOR_USERNAME, false},
     {"USER", ftp_manage_client_cmd_user, FTP_WAITING_FOR_USERNAME, false},
+    {"HELP", ftp_manage_client_cmd_help, FTP_WAITING_FOR_USERNAME, false},
     {"PASS", ftp_manage_client_cmd_pass, FTP_WAITING_FOR_PASSWORD, false},
     {"CWD",  ftp_manage_client_cmd_cwd,  FTP_CONNECTED, false},
     {"CDUP", ftp_manage_client_cmd_cdup, FTP_CONNECTED, false},

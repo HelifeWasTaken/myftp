@@ -44,9 +44,8 @@ int ftp_manage_client_cmd_pasv_internal(struct ftp_server *server UNUSED,
     struct protoent *proto = getprotobyname("TCP");
     socklen_t s = sizeof(client->mod.sockin);
 
-    client->mod.sockin = (struct sockaddr_in){
-        .sin_port = htons(0), .sin_family = AF_INET,
-        .sin_addr = { .s_addr = INADDR_ANY }};
+    client->mod.sockin = (struct sockaddr_in){ .sin_port = htons(0),
+        .sin_family = AF_INET, .sin_addr = { .s_addr = INADDR_ANY } };
     if (proto == NULL)
         return 1;
     if (client->mod.sockfd == -1) {

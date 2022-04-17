@@ -89,6 +89,6 @@ void ftp_manage_client_cmd_quit(struct ftp_server *server,
 {
     if (argc > 2)
         return rfc959(client, 501);
-    rfc959(client, 200);
+    rfc959(client, 221);
     ftp_disconnect_client(server, client - server->selector.clients_data);
 }

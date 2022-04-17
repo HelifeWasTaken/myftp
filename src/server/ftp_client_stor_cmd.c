@@ -44,7 +44,7 @@ static void ftp_manage_client_stor_user_internal_recv(
         return rfc959(client, 425);
     while ((towrite = read(fd, buf, BUFSIZ)) > 0)
         socket_write(data, buf, towrite);
-    towrite != -1 ? rfc959(client, 250) : rfc959(client, 426);
+    towrite != -1 ? rfc959(client, 226) : rfc959(client, 426);
     ftp_disconnect_client_mode_state(server,
             client - server->selector.clients_data);
 }
@@ -69,7 +69,7 @@ static void ftp_manage_client_stor_internal(struct ftp_server *server,
         return rfc959(client, 550);
     if (errno == EBUSY)
         return rfc959(client, 450);
-    if ((fd = open(client->path, O_WRONLY | O_CREAT)) == -1)
+    if ((fd = open(client->path, O_WRONLY | O_CREAT | O_TRUNC, 0666)) == -1)
         return errno == EBUSY ? rfc959(client, 450) : rfc959(client, 550);
     rfc959(client, 150);
     ftp_manage_client_stor_user_internal_recv(server, client, fd);

@@ -63,8 +63,8 @@ static void ftp_manage_client_stor_internal(struct ftp_server *server,
     status = ftp_resolve_file_path(client, rootfolder, file_to_store);
     if (status != FTP_PATH_VALID)
         return rfc959(client, 550);
-    if (stat(client->path, &st) != -1)
-        return rfc959(client, 550);
+    errno = 0;
+    stat(client->path, &st);
     if (errno == EACCES)
         return rfc959(client, 550);
     if (errno == EBUSY)
